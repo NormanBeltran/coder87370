@@ -1,0 +1,24 @@
+{
+    "cliente": [
+        {
+            "nome": "Rafael",
+            "idade": 29,
+            "cidade": "S\u00e3o Paulo"
+        },
+        {
+            "nome": "Ana",
+            "idade": 25,
+            "cidade": "Rio de Janeiro"
+        },
+        {
+            "nome": "Maria",
+            "idade": 35,
+            "cidade": "Florian\u00f3polis"
+        },
+        {
+            "nome": "Jose",
+            "idade": 30,
+            "cidade": "Ipanema"
+        }
+    ]
+}
