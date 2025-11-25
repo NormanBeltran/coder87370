@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.template import Template, Context
+from django.template import Template, Context, loader
 import datetime
 
 def saludar(request):
@@ -30,9 +30,17 @@ def bienvenido_html(request, nombre, apellido):
 def bienvenido_tpl(request, nombre, apellido):
     hoy = datetime.datetime.now()
 
-    with open("C:/Coderhouse/87370/clase_11/proyecto/proyecto/plantillas/bienvenida.html", "r", encoding="utf-8") as file:
+    with open("C:/Coderhouse/87370/clase_11_12/proyecto/proyecto/plantillas/bienvenida.html", "r", encoding="utf-8") as file:
         template = Template(file.read())
         contexto = Context({"nombre": nombre, "apellido": apellido, "hoy": hoy})
         html_content = template.render(contexto)
 
     return HttpResponse(html_content)
+
+def bienvenido_tpl2(request, nombre, apellido):
+    hoy = datetime.datetime.now()
+    notas = [4,3,6,7, 8, 9, 10]
+    contexto = {"nombre": nombre, "apellido": apellido, "hoy": hoy, "notas": notas}
+    plantilla = loader.get_template("bienvenida2.html")
+    respuesta = plantilla.render(contexto)
+    return HttpResponse(respuesta)

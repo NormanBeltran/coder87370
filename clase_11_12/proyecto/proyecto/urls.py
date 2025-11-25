@@ -26,4 +26,5 @@ urlpatterns = [
     path("bienvenido/<str:nombre>/<str:apellido>/", bienvenido),
     path("bienvenido_html/<str:nombre>/<str:apellido>/", bienvenido_html),
     path("bienvenido_tpl/<str:nombre>/<str:apellido>/", bienvenido_tpl),
+    path("bienvenido_tpl2/<str:nombre>/<str:apellido>/", bienvenido_tpl2),
 ]
