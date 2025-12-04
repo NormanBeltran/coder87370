@@ -3,7 +3,7 @@ from .models import *
 # Register your models here.
 
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ("nombre", "comision")
+    list_display = ("nombre", "comision", "profesor")
     list_filter = ("comision",)
 
 class ProfesorAdmin(admin.ModelAdmin):
