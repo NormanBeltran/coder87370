@@ -1,6 +1,9 @@
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from .models import *
 from .forms import *
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
 
 # Create your views here.
 def home(request):
@@ -114,3 +117,34 @@ def profesorDelete(request, id):
     profesor.delete()
     contexto = {"profesores": Profesor.objects.all()}
     return render(request, "entidades/profesores.html", contexto)
+
+#___________________ Estudiantes
+#  Usar Classes Based Views para la gestion de Estudiantes
+
+class EstudianteListView(ListView):
+    model = Estudiante
+    template_name = "entidades/estudiante_registros.html"
+
+    # Opcional: modificar el contexto para enviar datos adicionales
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['estudiante_list'] = Estudiante.objects.all()
+        #context['estudiante_list'] = Estudiante.objects.filter(nombre__icontains='P')
+        return context
+
+class EstudianteCreateView(CreateView):
+    model = Estudiante
+    fields = [ 'nombre', 'apellido', 'email']
+    success_url = reverse_lazy('estudiantes')
+
+class EstudianteUpdateView(UpdateView):
+    model = Estudiante
+    fields = [ 'nombre', 'apellido', 'email']
+    success_url = reverse_lazy('estudiantes')
+
+class EstudianteDeleteView(DeleteView):
+    model = Estudiante
+    success_url = reverse_lazy('estudiantes')
+
+# __________________ Entregables
+#     
