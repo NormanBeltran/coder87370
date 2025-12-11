@@ -23,11 +23,24 @@
         <nav class="navbar navbar-light bg-light static-top">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}">Inicio</a>
-                <a class="navbar-brand" href="{% url 'cursos' %}">Cursos</a>
-                <a class="navbar-brand" href="{% url 'profesores' %}">Profesores</a>
-                <a class="navbar-brand" href="{% url 'estudiantes' %}">Estudiantes</a>
-                <a class="navbar-brand" href="{% url 'entregables' %}">Entregables</a>
-                <a class="btn btn-primary" href="#signup">Sign Up</a>
+                {% if user.is_authenticated %}
+                    <a class="navbar-brand" href="{% url 'cursos' %}">Cursos</a>
+                    <a class="navbar-brand" href="{% url 'profesores' %}">Profesores</a>
+                    <a class="navbar-brand" href="{% url 'estudiantes' %}">Estudiantes</a>
+                    <a class="navbar-brand" href="{% url 'entregables' %}">Entregables</a>                
+
+                    <span style="color:red"  class="navbar-text me-3">
+                    {{ user.username }} <br> [{{ user.first_name }} {{ user.last_name }}]
+                    </span>
+                
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Logout</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-primary" href="{% url 'login' %}">Login</a>
+                {% endif %}
+                                    
             </div>
         </nav>
         <!-- Masthead-->

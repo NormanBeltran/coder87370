@@ -4,27 +4,36 @@ from .models import *
 from .forms import *
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from django.contrib.auth.views import LoginView
 
 # Create your views here.
 def home(request):
     return render(request, "entidades/index.html")
 
+@login_required 
 def cursos(request):
     contexto = {"cursos": Curso.objects.all()}
     return render(request, "entidades/cursos.html", contexto)
 
+@login_required 
 def profesores(request):
     contexto = {"profesores": Profesor.objects.all()}
     return render(request, "entidades/profesores.html", contexto)
 
+@login_required 
 def estudiantes(request):
     contexto = {"estudiantes": Estudiante.objects.all()}
     return render(request, "entidades/estudiantes.html", contexto)
 
+@login_required 
 def entregables(request):
     contexto = {"entregables": Entregable.objects.all()}
     return render(request, "entidades/entregables.html", contexto)
 
+@login_required 
 def cursoForm(request):
     if request.method == "POST":
         miFormulario = CursoForm(request.POST) # Aqui me llega toda la informacion del formulario
@@ -44,6 +53,7 @@ def cursoForm(request):
     contexto = { "form": miFormulario}
     return render(request, "entidades/cursoForm.html", contexto)
 
+@login_required 
 def cursoUpdate(request, id):
     curso = Curso.objects.get(id=id)
 
@@ -64,6 +74,7 @@ def cursoUpdate(request, id):
     contexto = { "form": miFormulario}
     return render(request, "entidades/cursoForm.html", contexto)
 
+@login_required 
 def cursoDelete(request, id):
     curso = Curso.objects.get(id=id)
     curso.delete()
@@ -71,6 +82,8 @@ def cursoDelete(request, id):
     return render(request, "entidades/cursos.html", contexto)
 
 # Profesores
+
+@login_required 
 def profesorForm(request):
     if request.method == "POST":
         miFormulario = ProfesorForm(request.POST) # Aqui me llega toda la informacion del formulario
@@ -91,6 +104,7 @@ def profesorForm(request):
     contexto = { "form": miFormulario}
     return render(request, "entidades/profesorForm.html", contexto)
 
+@login_required 
 def profesorUpdate(request, id):
     profesor = Profesor.objects.get(id=id)
 
@@ -112,6 +126,7 @@ def profesorUpdate(request, id):
     contexto = { "form": miFormulario}
     return render(request, "entidades/profesorForm.html", contexto)
 
+@login_required 
 def profesorDelete(request, id):
     profesor = Profesor.objects.get(id=id)
     profesor.delete()
@@ -121,7 +136,7 @@ def profesorDelete(request, id):
 #___________________ Estudiantes
 #  Usar Classes Based Views para la gestion de Estudiantes
 
-class EstudianteListView(ListView):
+class EstudianteListView(LoginRequiredMixin, ListView):
     model = Estudiante
     template_name = "entidades/estudiante_registros.html"
 
@@ -132,19 +147,44 @@ class EstudianteListView(ListView):
         #context['estudiante_list'] = Estudiante.objects.filter(nombre__icontains='P')
         return context
 
-class EstudianteCreateView(CreateView):
+class EstudianteCreateView(LoginRequiredMixin, CreateView):
     model = Estudiante
     fields = [ 'nombre', 'apellido', 'email']
     success_url = reverse_lazy('estudiantes')
 
-class EstudianteUpdateView(UpdateView):
+class EstudianteUpdateView(LoginRequiredMixin, UpdateView):
     model = Estudiante
     fields = [ 'nombre', 'apellido', 'email']
     success_url = reverse_lazy('estudiantes')
 
-class EstudianteDeleteView(DeleteView):
+class EstudianteDeleteView(LoginRequiredMixin, DeleteView):
     model = Estudiante
     success_url = reverse_lazy('estudiantes')
 
-# __________________ Entregables
+
+# __________________ Buscar Curso
+@login_required 
+def buscarCursos(request):
+    return render(request, "entidades/buscarCursos.html")
+
+@login_required 
+def encontrarCursos(request):
+    if request.GET["buscar"]:
+        patron = request.GET["buscar"]
+        cursos = Curso.objects.filter(nombre__icontains=patron)
+        contexto = {"cursos": cursos, "patron": patron}
+        return render(request, "entidades/cursos.html", contexto)
+    else:
+        respuesta = "No se ingresó ningún dato de búsqueda."
+        return render(request, "entidades/cursos.html", {"respuesta": respuesta})
+
+# __________________ Login / Logout / Registration
 #     
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
+    #fields = '__all__'
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        return reverse_lazy('home')
