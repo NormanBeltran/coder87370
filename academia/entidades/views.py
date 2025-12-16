@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .models import *
 from .forms import *
@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import login
+from django.contrib.auth import authenticate
 
 # Create your views here.
 def home(request):
@@ -188,3 +190,43 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         return reverse_lazy('home')
+    
+def register(request):
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('home')   
+    else:
+        form = RegistroForm()
+    return render(request, 'registration/register.html', {'form': form})     
+
+@login_required 
+def perfil(request):
+    usuario = request.user
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('home')  # Redirige a la página de perfil después de guardar
+    else:
+        form = ProfileForm(instance=usuario)
+
+    return render(request, 'registration/perfil.html', {'form': form} )  
+
+
+@login_required 
+def avatar(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = AvatarForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = AvatarForm(instance=profile)
+    return render(request, 'registration/avatar.html', {'form': form})

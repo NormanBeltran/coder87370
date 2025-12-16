@@ -37,4 +37,7 @@ urlpatterns = [
     # ____ Login / Logout / Registration
     path("login/", CustomLoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(next_page='home'), name="logout"),
+    path("register/", register, name="register"),
+    path("perfil/", perfil, name="perfil"),
+    path("avatar/", avatar, name="avatar"),
 ]
